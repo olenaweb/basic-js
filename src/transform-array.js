@@ -13,9 +13,29 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+
+function transform(arr) {
+  if (!Array.isArray(arr)) {
+    throw new Error('\'arr\' parameter must be an instance of the Array!');
+  }
+  const newArr = arr.flatMap((item, i, arr) => {
+    if (arr[i - 1] === '--double-next' && arr[i + 1] === '--double-prev') return [item, item, item];
+    if (arr[i - 1] === '--double-next' && arr[i + 1] === '--discard-prev') return [item];
+    if (arr[i - 1] === '--discard-next' && arr[i + 1] === '--double-prev') return [];
+    if (arr[i - 1] === '--discard-next' && arr[i + 1] === '--discard-prev') return [];
+    if (arr[i + 1] === '--discard-prev') return [];
+    if (arr[i + 1] === '--double-prev') return [item, item];
+    if (arr[i - 1] === '--discard-next') return [];
+    if (arr[i - 1] === '--double-next') return [item, item];
+
+    // if (item.toString().slice(0, 3) == ('--d')) return [];
+    if (item == '--discard-prev' ||
+      item == '--double-prev' ||
+      item == '--discard-next' ||
+      item == '--double-next') return [];
+    return item;
+  });
+  return newArr;
 }
 
 module.exports = {
